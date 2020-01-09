@@ -1,5 +1,4 @@
 import random
-import sys
 
 WORLD_WIDTH = 60
 WORLD_HEIGHT = 40
@@ -13,7 +12,6 @@ class SnakeGrid:
         self.desired_length = 5
         self.grid_width = 37
         self.grid_height = 37
-        self.clock = 0.0
 
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
@@ -40,25 +38,14 @@ section_size = WIDTH / grid.grid_width
 
 def draw():
     screen.clear()
-    snake_segments = []
-    snake_segments.append(Actor('snake_head_tiny'))
-    for i in range(len(grid.segments) - 1):
-        snake_segments.append(Actor('snake_body_tiny'))
+    snake_segments = [Actor('snake_head') for segment in grid.segments]
     for num, segment in enumerate(grid.segments):
         seg = snake_segments[num]
         seg.pos = segment[0] * section_size, segment[1] * section_size
         seg.draw()
-    snake_segments[0].draw()
 
-def update(dt):
-    TICK_DURATION = 0.1
-    grid.clock += dt
-    if grid.clock > TICK_DURATION:
-        grid.clock -= TICK_DURATION
-        grid.update()
-        if grid.collission():
-            print("YOU LOSE!")
-            sys.exit(0)
+def update():
+    grid.update()
 
 def on_key_down(key, *args):
     if key == keys.DOWN:
@@ -69,5 +56,3 @@ def on_key_down(key, *args):
         grid.speed = (-1, 0)
     elif key == keys.RIGHT:
         grid.speed = (1, 0)
-    elif key == keys.SPACE:
-        grid.eat()
