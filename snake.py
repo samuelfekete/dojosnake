@@ -4,12 +4,14 @@ WORLD_WIDTH = 60
 WORLD_HEIGHT = 40
 
 
-class Snake:
+class SnakeGrid:
 
     def __init__(self):
         self.segments = [(10,10)]
         self.speed = (-1, 0)
         self.desired_length = 5
+        self.grid_width = 37
+        self.grid_height = 37
 
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
@@ -30,11 +32,9 @@ class Snake:
 
 WIDTH = 740
 HEIGHT = 740
-grid_width = 37
-grid_height = 37
-section_size = WIDTH / grid_width
 
-grid = Snake()
+grid = SnakeGrid()
+section_size = WIDTH / grid.grid_width
 
 def draw():
     screen.clear()
@@ -43,4 +43,16 @@ def draw():
         seg = snake_segments[num]
         seg.pos = segment[0] * section_size, segment[1] * section_size
         seg.draw()
+
+def update():
     grid.update()
+
+def on_key_down(key, *args):
+    if key == keys.DOWN:
+        grid.speed = (0, 1)
+    elif key == keys.UP:
+        grid.speed = (0, -1)
+    elif key == keys.LEFT:
+        grid.speed = (-1, 0)
+    elif key == keys.RIGHT:
+        grid.speed = (1, 0)
