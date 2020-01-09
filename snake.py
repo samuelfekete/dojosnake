@@ -34,8 +34,12 @@ HEIGHT = 740
 grid = SnakeGrid()
 section_size = WIDTH / grid.grid_width
 
+food = Actor('food_tiny')
+food.pos = (74, 74)
+
 def draw():
     screen.clear()
+    food.draw()
     snake_segments = []
     snake_segments.append(Actor('snake_head_tiny'))
     for i in range(len(grid.segments) - 1):
