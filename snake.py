@@ -1,4 +1,5 @@
 import random
+import sys
 
 WORLD_WIDTH = 60
 WORLD_HEIGHT = 40
@@ -51,6 +52,9 @@ def update(dt):
     if grid.clock > TICK_DURATION:
         grid.clock -= TICK_DURATION
         grid.update()
+        if grid.collission():
+            print("YOU LOSE!")
+            sys.exit(0)
 
 def on_key_down(key, *args):
     if key == keys.DOWN:
