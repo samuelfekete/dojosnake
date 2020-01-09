@@ -11,7 +11,10 @@ class Snake:
 
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
-        ...
+        old_head_x, old_head_y = self.segments[0]
+        head = (old_head_x + self.speed[0], old_head_y + self.speed[1])
+        self.segments.insert(0, head)
+        self.segments = self.segments[:self.desired_length]
 
     def eat(self):
         """Start making the snake longer"""
@@ -19,6 +22,7 @@ class Snake:
 
     def collission(self):
         """Returns True if the snake collided with itself"""
+        return self.segments[0] in self.segments[1:]
 
 
 
