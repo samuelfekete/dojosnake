@@ -39,7 +39,7 @@ section_size = WIDTH / grid.grid_width
 
 def draw():
     screen.clear()
-    snake_segments = [Actor('alien') for segment in grid.segments]
+    snake_segments = [Actor('snake_head_small') for segment in grid.segments]
     for num, segment in enumerate(grid.segments):
         seg = snake_segments[num]
         seg.pos = segment[0] * section_size, segment[1] * section_size
