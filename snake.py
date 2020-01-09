@@ -1,5 +1,30 @@
 import random
 
+
+
+class Snake:
+
+    def __init__(self):
+        self.segments = [(10,10)]
+        self.speed = (-1, 0)
+        self.desired_length = 5
+
+    def update(self):
+        """Moves the snake at the current speed, calculates positions of all segments"""
+        ...
+
+    def eat(self):
+        """Start making the snake longer"""
+        self.desired_length += 4
+
+    def collission(self):
+        """Returns True if the snake collided with itself"""
+
+
+
+
+
+
 alien = Actor('alien')
 alien2= Actor('alien')
 
