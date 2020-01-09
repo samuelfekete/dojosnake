@@ -39,11 +39,15 @@ section_size = WIDTH / grid.grid_width
 
 def draw():
     screen.clear()
-    snake_segments = [Actor('snake_head_small') for segment in grid.segments]
+    snake_segments = []
+    snake_segments.append(Actor('snake_head_tiny'))
+    for i in range(len(grid.segments) - 1):
+        snake_segments.append(Actor('snake_body_tiny'))
     for num, segment in enumerate(grid.segments):
         seg = snake_segments[num]
         seg.pos = segment[0] * section_size, segment[1] * section_size
         seg.draw()
+    snake_segments[0].draw()
 
 def update(dt):
     TICK_DURATION = 0.1
