@@ -10,6 +10,7 @@ class SnakeGrid:
         self.grid_width = 20
         self.grid_height = 20
         self.clock = 0.0
+        self.current_food = (7, 9)
 
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
@@ -18,6 +19,10 @@ class SnakeGrid:
                 (old_head_y + self.speed[1]) % self.grid_height)
         self.segments.insert(0, head)
         self.segments = self.segments[:self.desired_length]
+
+        if head == self.current_food:
+            self.eat()
+            self.current_food = (random.randrange(self.grid_width), random.randrange(self.grid_height))
 
     def eat(self):
         """Start making the snake longer"""
@@ -35,7 +40,6 @@ grid = SnakeGrid()
 section_size = WIDTH / grid.grid_width
 
 food = Actor('food_tiny')
-food.pos = (section_size * 5, section_size * 5)
 
 def draw():
     screen.clear()
@@ -56,6 +60,7 @@ def update(dt):
     if grid.clock > TICK_DURATION:
         grid.clock -= TICK_DURATION
         grid.update()
+        food.pos = (section_size * grid.current_food[0], section_size * grid.current_food[1])
         if grid.collission():
             print("YOU LOSE!")
             sys.exit(0)
