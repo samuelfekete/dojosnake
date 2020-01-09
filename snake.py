@@ -12,6 +12,7 @@ class SnakeGrid:
         self.desired_length = 5
         self.grid_width = 37
         self.grid_height = 37
+        self.clock = 0.0
 
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
@@ -44,8 +45,12 @@ def draw():
         seg.pos = segment[0] * section_size, segment[1] * section_size
         seg.draw()
 
-def update():
-    grid.update()
+def update(dt):
+    TICK_DURATION = 0.1
+    grid.clock += dt
+    if grid.clock > TICK_DURATION:
+        grid.clock -= TICK_DURATION
+        grid.update()
 
 def on_key_down(key, *args):
     if key == keys.DOWN:
@@ -56,3 +61,5 @@ def on_key_down(key, *args):
         grid.speed = (-1, 0)
     elif key == keys.RIGHT:
         grid.speed = (1, 0)
+    elif key == keys.SPACE:
+        grid.eat()
