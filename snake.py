@@ -58,7 +58,7 @@ def update(dt):
         grid.update()
         if grid.collission():
             print("YOU LOSE!")
-            sys.exit(0)
+            sys.exit(1)
 
 def on_key_down(key, *args):
     if key == keys.DOWN:
