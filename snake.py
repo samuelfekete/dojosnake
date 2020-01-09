@@ -7,8 +7,8 @@ class SnakeGrid:
         self.segments = [(10,10)]
         self.speed = (-1, 0)
         self.desired_length = 5
-        self.grid_width = 37
-        self.grid_height = 37
+        self.grid_width = 20
+        self.grid_height = 20
         self.clock = 0.0
 
     def update(self):
@@ -35,7 +35,7 @@ grid = SnakeGrid()
 section_size = WIDTH / grid.grid_width
 
 food = Actor('food_tiny')
-food.pos = (74, 74)
+food.pos = (section_size * 5, section_size * 5)
 
 def draw():
     screen.clear()
