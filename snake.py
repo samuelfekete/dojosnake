@@ -1,5 +1,7 @@
 import random
 
+WORLD_WIDTH = 60
+WORLD_HEIGHT = 40
 
 
 class Snake:
@@ -12,7 +14,8 @@ class Snake:
     def update(self):
         """Moves the snake at the current speed, calculates positions of all segments"""
         old_head_x, old_head_y = self.segments[0]
-        head = (old_head_x + self.speed[0], old_head_y + self.speed[1])
+        head = ((old_head_x + self.speed[0]) % WORLD_WIDTH,
+                (old_head_y + self.speed[1]) % WORLD_HEIGHT)
         self.segments.insert(0, head)
         self.segments = self.segments[:self.desired_length]
 
