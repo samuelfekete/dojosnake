@@ -50,13 +50,15 @@ def draw():
         seg.draw()
     snake_segments[0].draw()
 
+detect_collisions = True
+
 def update(dt):
     TICK_DURATION = 0.1
     grid.clock += dt
     if grid.clock > TICK_DURATION:
         grid.clock -= TICK_DURATION
         grid.update()
-        if grid.collission():
+        if detect_collisions and grid.collission():
             print("YOU LOSE!")
             sys.exit(1)
 
@@ -71,3 +73,6 @@ def on_key_down(key, *args):
         grid.speed = (1, 0)
     elif key == keys.SPACE:
         grid.eat()
+    elif key == keys.RETURN:
+        global detect_collisions
+        detect_collisions = not detect_collisions
