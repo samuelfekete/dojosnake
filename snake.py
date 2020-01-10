@@ -1,83 +1,63 @@
 import random
 import sys
 
-class SnakeGrid:
+WIDTH = 600
+HEIGHT = 600
 
-    def __init__(self):
-        self.segments = [(10,10)]
-        self.speed = (-1, 0)
-        self.desired_length = 5
-        self.grid_width = 20
-        self.grid_height = 20
-        self.clock = 0.0
-        self.current_food = (7, 9)
+food = Actor('food_tiny', center=(random.randrange(WIDTH), random.randrange(HEIGHT)))
+snake = [Actor('snake_head_tiny')]
 
-    def update(self):
-        """Moves the snake at the current speed, calculates positions of all segments"""
-        old_head_x, old_head_y = self.segments[0]
-        head = ((old_head_x + self.speed[0]) % self.grid_width,
-                (old_head_y + self.speed[1]) % self.grid_height)
-        self.segments.insert(0, head)
-        self.segments = self.segments[:self.desired_length]
+snake_speed = (-1, 0)
 
-        if head == self.current_food:
-            self.eat()
-            self.current_food = (random.randrange(self.grid_width), random.randrange(self.grid_height))
+def grow_snake(amount=3):
+    last_position = snake[-1].center
+    for i in range(amount):
+        snake.append(Actor('snake_body_tiny', center=last_position))
 
-    def eat(self):
-        """Start making the snake longer"""
-        self.desired_length += 4
-
-    def collission(self):
-        """Returns True if the snake collided with itself"""
-        return self.segments[0] in self.segments[1:]
-
-
-WIDTH = 740
-HEIGHT = 740
-
-grid = SnakeGrid()
-section_size = WIDTH / grid.grid_width
-
-food = Actor('food_tiny')
+grow_snake(3)
 
 def draw():
     screen.clear()
     food.draw()
-    snake_segments = []
-    snake_segments.append(Actor('snake_head_tiny'))
-    for i in range(len(grid.segments) - 1):
-        snake_segments.append(Actor('snake_body_tiny'))
-    for num, segment in enumerate(grid.segments):
-        seg = snake_segments[num]
-        seg.pos = segment[0] * section_size, segment[1] * section_size
-        seg.draw()
-    snake_segments[0].draw()
+    for snake_part in snake:
+        snake_part.draw()
 
-detect_collisions = True
+def snake_is_colliding():
+    """Returns True if the snake collided with itself"""
+    if snake[0].collidelist(snake[1:]) > 0:
+        return True
 
-def update(dt):
-    TICK_DURATION = 0.1
-    grid.clock += dt
-    if grid.clock > TICK_DURATION:
-        grid.clock -= TICK_DURATION
-        grid.update()
-        food.pos = (section_size * grid.current_food[0], section_size * grid.current_food[1])
-        if detect_collisions and grid.collission():
-            print("YOU LOSE!")
-            sys.exit(1)
+def snake_is_eating():
+    """Returns True if the snake is eating food"""
+    if snake[0].colliderect(food):
+        return True
+
+def move_snake():
+    old_head_x, old_head_y = snake[0].center
+    new_head_position = ((old_head_x + snake_speed[0] * snake[0].width) % WIDTH,
+        (old_head_y + snake_speed[1] * snake[0].height) % HEIGHT)
+    
+    for i in range(len(snake) - 1, 0, -1):
+        snake[i].center = snake[i-1].center
+    snake[0].center = new_head_position
+
+    if snake_is_colliding():
+        print("YOU LOSE!")
+        sys.exit(1)
+
+    if snake_is_eating():
+        grow_snake(3)
+        animate(food, pos=(random.randrange(20, WIDTH-20), random.randrange(20,HEIGHT-20)))
+
+clock.schedule_interval(move_snake, 0.4)
 
 def on_key_down(key, *args):
+    global snake_speed
     if key == keys.DOWN:
-        grid.speed = (0, 1)
+        snake_speed = (0, 1)
     elif key == keys.UP:
-        grid.speed = (0, -1)
+        snake_speed = (0, -1)
     elif key == keys.LEFT:
-        grid.speed = (-1, 0)
+        snake_speed = (-1, 0)
     elif key == keys.RIGHT:
-        grid.speed = (1, 0)
-    elif key == keys.SPACE:
-        grid.eat()
-    elif key == keys.RETURN:
-        global detect_collisions
-        detect_collisions = not detect_collisions
+        snake_speed = (1, 0)
