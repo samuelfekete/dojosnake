@@ -36,7 +36,7 @@ def draw():
             snake_part.draw()
 
 def snake_is_colliding():
-    """Returns True if the snake collided with itself"""
+    """Returns True if the snake collided with itself or the edges"""
     
     if snake_head.collidelist(snake[1:]) > 0:
         return True
