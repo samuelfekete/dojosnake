@@ -1,63 +1,103 @@
 import random
-import sys
 
-WIDTH = 600
-HEIGHT = 600
+WIDTH = 629
+HEIGHT = 629
+
+RIGHT = 90
+UP = 180
+LEFT = 270
+DOWN = 360
 
 food = Actor('food_tiny', center=(random.randrange(WIDTH), random.randrange(HEIGHT)))
-snake = [Actor('snake_head_tiny')]
+snake_head = Actor('snake_head_tiny', left=0, top=0)
+snake = [snake_head]
 
-snake_speed = (-1, 0)
+snake_head.direction = RIGHT
+snake_head.angle = RIGHT
+snake_head.alive = True
 
-def grow_snake(amount=3):
+def grow_snake():
     last_position = snake[-1].center
-    for i in range(amount):
-        snake.append(Actor('snake_body_tiny', center=last_position))
+    snake.append(Actor('snake_body_tiny', center=last_position))
 
-grow_snake(3)
+grow_snake()
 
 def draw():
     screen.clear()
-    food.draw()
-    for snake_part in snake:
-        snake_part.draw()
+    if not snake_head.alive:
+        screen.draw.text(
+            "YOU LOSE!",
+            center=(WIDTH/2, HEIGHT/2),
+            fontsize=64
+        )
+    else:
+        food.draw()
+        for snake_part in snake:
+            snake_part.draw()
 
 def snake_is_colliding():
     """Returns True if the snake collided with itself"""
-    if snake[0].collidelist(snake[1:]) > 0:
+    if snake_head.collidelist(snake[1:]) > 0:
+        return True
+    if snake_over_edge():
         return True
 
 def snake_is_eating():
     """Returns True if the snake is eating food"""
-    if snake[0].colliderect(food):
+    if snake_head.colliderect(food):
+        return True
+
+def snake_over_edge():
+    """Returns true if the snake is over the edge."""
+    if snake_head.left < 0:
+        return True
+    if snake_head.top < 0:
+        return True
+    if snake_head.right > WIDTH:
+        return True
+    if snake_head.bottom > HEIGHT:
         return True
 
 def move_snake():
-    old_head_x, old_head_y = snake[0].center
-    new_head_position = ((old_head_x + snake_speed[0] * snake[0].width) % WIDTH,
-        (old_head_y + snake_speed[1] * snake[0].height) % HEIGHT)
-    
     for i in range(len(snake) - 1, 0, -1):
         snake[i].center = snake[i-1].center
-    snake[0].center = new_head_position
+
+    if snake_head.direction == LEFT:
+        snake_head.right = snake_head.left
+
+    if snake_head.direction == RIGHT:
+        snake_head.left = snake_head.right
+
+    if snake_head.direction == UP:
+        snake_head.bottom = snake_head.top
+
+    if snake_head.direction == DOWN:
+        snake_head.top = snake_head.bottom
 
     if snake_is_colliding():
-        print("YOU LOSE!")
-        sys.exit(1)
+        snake_head.alive = False
 
     if snake_is_eating():
-        grow_snake(3)
-        animate(food, pos=(random.randrange(20, WIDTH-20), random.randrange(20,HEIGHT-20)))
-
-clock.schedule_interval(move_snake, 0.4)
+        grow_snake()
+        animate(
+            food,
+            pos=(random.randrange(20, WIDTH-20), random.randrange(20,HEIGHT-20)),
+            tween="in_out_elastic",
+            duration=0.5,
+        )
 
 def on_key_down(key, *args):
-    global snake_speed
     if key == keys.DOWN:
-        snake_speed = (0, 1)
+        snake_head.direction = DOWN
+        snake_head.angle = DOWN
     elif key == keys.UP:
-        snake_speed = (0, -1)
+        snake_head.direction = UP
+        snake_head.angle = UP
     elif key == keys.LEFT:
-        snake_speed = (-1, 0)
+        snake_head.direction = LEFT
+        snake_head.angle = LEFT
     elif key == keys.RIGHT:
-        snake_speed = (1, 0)
+        snake_head.direction = RIGHT
+        snake_head.angle = RIGHT
+
+clock.schedule_interval(move_snake, 0.3)
